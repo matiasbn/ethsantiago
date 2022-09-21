@@ -1,4 +1,4 @@
 export enum CONTRACTS_NAMES {
-    REENTRANCY = "Reentrancy",
-    ATTACKER = "Attacker"
+  REENTRANCY = "Reentrancy",
+  ATTACKER = "Attacker",
 }

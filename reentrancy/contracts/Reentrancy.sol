@@ -1,9 +1,6 @@
 pragma solidity ^0.8.17;
 
-// Address: 0xDAFEA492D9c6733ae3d56b7Ed1ADB60692c98Bc5
-
 contract Reentrancy {
-
     event LogDeposit(uint256 amount, address indexed sender);
     event LogWithdraw(uint256 amount, address indexed sender);
 
@@ -17,7 +14,7 @@ contract Reentrancy {
         emit LogWithdraw(amountToWithdraw, msg.sender);
     }
 
-    function deposit() payable public {
+    function deposit() public payable {
         userBalances[msg.sender] += msg.value;
         emit LogDeposit(msg.value, msg.sender);
     }
