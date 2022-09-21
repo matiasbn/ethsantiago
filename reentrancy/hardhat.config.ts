@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
     deployer: {
       default: 0,
     },
-    notDeployer: {
+    attacker: {
       default: 1,
     },
   },

@@ -1,7 +1,8 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "test": "hh test"
+    "test": "hh test",
+    "compile": "hh compile"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

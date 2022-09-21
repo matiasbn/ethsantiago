@@ -30,20 +30,29 @@ import type {
 export interface ReentrancyInterface extends utils.Interface {
   functions: {
     "deposit()": FunctionFragment;
+    "userBalances(address)": FunctionFragment;
     "withdrawBalance()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "deposit" | "withdrawBalance"
+    nameOrSignatureOrTopic: "deposit" | "userBalances" | "withdrawBalance"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "userBalances",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawBalance",
     values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "userBalances",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawBalance",
     data: BytesLike
@@ -111,6 +120,11 @@ export interface Reentrancy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    userBalances(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     withdrawBalance(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -120,12 +134,22 @@ export interface Reentrancy extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  userBalances(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   withdrawBalance(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     deposit(overrides?: CallOverrides): Promise<void>;
+
+    userBalances(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     withdrawBalance(overrides?: CallOverrides): Promise<void>;
   };
@@ -155,6 +179,11 @@ export interface Reentrancy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    userBalances(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     withdrawBalance(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -163,6 +192,11 @@ export interface Reentrancy extends BaseContract {
   populateTransaction: {
     deposit(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userBalances(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     withdrawBalance(
