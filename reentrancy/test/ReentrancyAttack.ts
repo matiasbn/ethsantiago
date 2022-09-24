@@ -34,6 +34,7 @@ describe(CONTRACTS_NAMES.REENTRANCY, function () {
     fixture = await setup();
   });
 
+  // we deposit an amount on behalf of certain user
   it("should deposit with deployer", async function () {
     const { reentrancyContract } = fixture;
     const depositAmount = parseEther("40");
@@ -50,6 +51,7 @@ describe(CONTRACTS_NAMES.REENTRANCY, function () {
     expect(events[0].args.amount).to.be.eql(depositAmount);
   });
 
+  // we deposit an amount on behalf of the Attacker contract
   it("should deposit from Attacker contract", async function () {
     const { attackerContract, reentrancyContract } = fixture;
     const depositAmount = parseEther("10");
@@ -68,6 +70,13 @@ describe(CONTRACTS_NAMES.REENTRANCY, function () {
     expect(events[0].args.amount).to.be.eql(depositAmount);
   });
 
+  // Vulnerability exploit
+  // 1. we validate that the contract has 50 eth
+  // 2. we validate that the Attacker has 10 to withdraw
+  // 3. we calculate the amount of loops to call (limit)
+  // 4. we perform the attack
+  // 5. we validate that the balance of the Reentrancy contract is 0 and Attacker is 50
+
   it("should withdraw multiple times with reentrancy", async function () {
     const { attackerContract, reentrancyContract } = fixture;
     const reentrancyContractBalance = await provider.getBalance(
@@ -84,6 +93,8 @@ describe(CONTRACTS_NAMES.REENTRANCY, function () {
       Number(formatUnits(reentrancyContractBalance)) /
       Number(formatUnits(attackerContractBalance));
     expect(limit).to.be.eql(5);
+
+    // perform the attack
     await attackerContract.withdraw(limit - 1);
     let filter = attackerContract.filters.LogReceived();
     let events = await attackerContract.queryFilter(filter);
@@ -94,5 +105,16 @@ describe(CONTRACTS_NAMES.REENTRANCY, function () {
     );
     events = await reentrancyContract.queryFilter(filter);
     expect(events.length).to.be.eql(5);
+
+    const reentrancyContractBalanceAfter = await provider.getBalance(
+      reentrancyContract.address
+    );
+
+    const attackerContractBalanceAfter = await provider.getBalance(
+      attackerContract.address
+    );
+
+    expect(formatUnits(reentrancyContractBalanceAfter)).to.be.eql("0.0");
+    expect(formatUnits(attackerContractBalanceAfter)).to.be.eql("50.0");
   });
 });
